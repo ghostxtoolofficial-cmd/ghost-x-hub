@@ -1,3 +1,1 @@
-(getgenv()).key = "MARU6J9LA2FEMWMUB9PDTKUVIL";
-(getgenv()).id = "1148578287937921105";
-loadstring(game:HttpGet("https://cdn.maruhub.online/s/pc"))()
+loadstring(game:HttpGet("https://luaegis.net/scripts/v4/loaders/95688543-726e-4d60-b29b-8c37d92881a9.lua"))()
