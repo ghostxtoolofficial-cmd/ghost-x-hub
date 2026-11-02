@@ -1,55 +1,38 @@
 -- ==========================================
--- 1. CONFIGURATION (ตั้งค่าชื่อตัวละครและโหมด)
--- ==========================================
--- โหมด: 
--- 1 = ไก่ตัน (ktscr.lua)
--- 2 = เมนูปกติ (manuscr.lua)
--- 3 = สคริปต์สำรอง (3scr.lua - ถ้ามี)
--- 4 = สคริปต์เกม AA (aascr.lua)
-
-local ModeConfig = {
-    ["ชื่อตัวละครที่1"] = 1,
-    ["ชื่อตัวละครที่2"] = 2,
-    ["ชื่อตัวละครที่3"] = 4, -- ตัวนี้จะรันสคริปต์ AA
-}
-
--- โหมดเริ่มต้น กรณีไม่พบชื่อตัวละครใน Config ข้างบน
-local DefaultMode = 2 
-
--- ==========================================
--- 2. GITHUB RAW URLS (ลิงก์ดิบจาก GitHub ของคุณ)
+-- GITHUB RAW URLS
 -- ==========================================
 local BaseURL = "https://raw.githubusercontent.com/ghostxtoolofficial-cmd/ghost-x-hub/refs/heads/main/"
 
 local Scripts = {
     [1] = BaseURL .. "ktscr.lua",
     [2] = BaseURL .. "manuscr.lua",
-    [3] = BaseURL .. "3scr.lua",
-    [4] = BaseURL .. "aascr.lua"
+    [3] = BaseURL .. "aascr.lua" -- จากรูปใน GitHub มี 3 สคริปต์หลัก (aascr, ktscr, manuscr)
 }
 
 -- ==========================================
--- 3. BOOTSTRAPPER LOGIC (ระบบตรวจสอบและรัน)
+-- BOOTSTRAPPER LOGIC
 -- ==========================================
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-
 local username = LocalPlayer.Name
-local selectedMode = ModeConfig[username] or DefaultMode
+
+-- ดึงค่าจาก Config ข้างนอก (ถ้าไม่ได้ตั้งข้างนอกไว้ จะใช้โหมด 2 เป็นค่าเริ่มต้น)
+local userConfig = _G.ModeConfig or {}
+local defaultMode = _G.DefaultMode or 2
+
+local selectedMode = userConfig[username] or defaultMode
 local targetURL = Scripts[selectedMode]
 
 if targetURL then
     print(string.format("[Ghost-X Hub] Player: %s | Running Mode: %d", username, selectedMode))
     
-    -- ทำการโหลดและรันสคริปต์เป้าหมาย
     local success, err = pcall(function()
         loadstring(game:HttpGet(targetURL))()
     end)
     
     if not success then
-        warn("[Ghost-X Hub] Execution Error: " .. tostring(err))
+        warn("[Ghost-X Hub] Failed to load target script: " .. tostring(err))
     end
 else
-    warn("[Ghost-X Hub] Invalid Script URL for Mode: " .. tostring(selectedMode))
+    warn("[Ghost-X Hub] Invalid mode selected: " .. tostring(selectedMode))
 end
-
